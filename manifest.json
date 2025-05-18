@@ -1,6 +1,6 @@
 {
-    "name": "多機能計算機",
-    "short_name": "計算機",
+    "name": "さくさく計算機",
+    "short_name": "さくさく計算機",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#2e3b4e",
