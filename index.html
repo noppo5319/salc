@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多機能計算機</title>
-  <link rel="manifest" href="manifest.json">
+    <title>さくさく計算機</title>
+    <link rel="manifest" href="manifest.json">
 <script>
     if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("service-worker.js")
@@ -12,198 +12,104 @@
             .catch(error => console.error("Service Worker registration failed:", error));
     }
 </script>
-
     <style>
         body {
-            background: #2e3b4e;
-            font-family: 'Arial', sans-serif;
-            text-align: center;
-            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #2E3B4E;
+            font-family: 'Segoe UI', sans-serif;
+            color: #EAEAEA;
         }
         .calculator {
-            width: 90%;
-            max-width: 400px;
-            margin: auto;
-            padding: 20px;
-            background: #3b485a;
-            border-radius: 10px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+            background: #3D4F64;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 320px;
         }
-        .tabs button {
-            background: #8aa7c2;
-            color: white;
-            border: none;
-            padding: 12px;
-            cursor: pointer;
-            margin: 5px;
-            font-size: 16px;
-            border-radius: 5px;
-            width: 30%;
-        }
-        .tab-content {
-            display: none;
-            padding: 10px;
-        }
-        input {
+        .display {
             width: 100%;
-            padding: 10px;
-            font-size: 20px;
-            margin-bottom: 10px;
+            height: 80px;
+            font-size: 2em;
             text-align: right;
-            border: 2px solid #8aa7c2;
-            border-radius: 5px;
-            background: #4c5c72;
-            color: white;
+            padding: 12px;
+            border: none;
+            background: #FFFFFF;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: #333;
         }
         .buttons {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            gap: 12px;
         }
         .buttons button {
-            width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            background: #5e7892;
-            color: white;
+            width: 75px;
+            height: 75px;
+            font-size: 1.7em;
             border: none;
+            border-radius: 10px;
             cursor: pointer;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-        .buttons button.operator {
-            background: #ff7043;
-        }
-        .buttons button.equals {
-            background: #28a745;
-        }
-        .buttons button:hover {
-            opacity: 0.8;
-        }
-        button.add-budget {
-            background: #28a745;
+            transition: background 0.3s;
+            background: #5A6B84;
             color: white;
-            font-size: 18px;
-            padding: 12px;
-            width: 100%;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
         }
-        button.add-budget:hover {
-            background: #218838;
+        .buttons .clear {
+            background: #D32F2F;
         }
-        button.calculate-tax {
-            background: #007bff;
-            color: white;
-            font-size: 18px;
-            padding: 12px;
-            width: 100%;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
+        .buttons .equal {
+            background: #1976D2;
         }
-        button.calculate-tax:hover {
-            background: #0056b3;
+        .buttons .operator {
+            background: #FF9800;
         }
-        ul {
-            list-style-type: none;
-            padding: 0;
+        .buttons button:active, .buttons button:hover {
+            background: #78909C;
         }
     </style>
 </head>
 <body>
     <div class="calculator">
-        <div class="tabs">
-            <button onclick="showTab('basic')">計算機</button>
-            <button onclick="showTab('budget')">家計簿</button>
-            <button onclick="showTab('tax')">税金計算</button>
-        </div>
-
-        <div id="basic" class="tab-content">
-            <input type="text" id="display" readonly>
-            <div class="buttons">
-                <button onclick="pressKey('7')">7</button>
-                <button onclick="pressKey('8')">8</button>
-                <button onclick="pressKey('9')">9</button>
-                <button class="operator" onclick="pressKey('+')">＋</button>
-                <button onclick="pressKey('4')">4</button>
-                <button onclick="pressKey('5')">5</button>
-                <button onclick="pressKey('6')">6</button>
-                <button class="operator" onclick="pressKey('-')">－</button>
-                <button onclick="pressKey('1')">1</button>
-                <button onclick="pressKey('2')">2</button>
-                <button onclick="pressKey('3')">3</button>
-                <button class="operator" onclick="pressKey('*')">×</button>
-                <button onclick="pressKey('0')">0</button>
-                <button onclick="pressKey('.')">.</button>
-                <button onclick="clearDisplay()">C</button>
-                <button class="operator" onclick="pressKey('/')">÷</button>
-                <button class="equals" onclick="calculate()">＝</button>
-            </div>
-            <h3>履歴</h3>
-            <ul id="history"></ul>
-        </div>
-
-        <div id="budget" class="tab-content">
-            <h2>家計簿</h2>
-            <input type="number" id="income" placeholder="収入">
-            <input type="number" id="expense" placeholder="支出">
-            <button class="add-budget" onclick="addBudget()">追加</button>
-            <h3>履歴</h3>
-            <ul id="budget-history"></ul>
-            <h3>合計収支: <span id="total-budget">¥0</span></h3>
-        </div>
-
-        <div id="tax" class="tab-content">
-            <h2>税金計算</h2>
-            <input type="number" id="incomeTax" placeholder="所得">
-            <button class="calculate-tax" onclick="calculateTax()">計算</button>
-            <p id="taxResult"></p>
+        <input type="text" class="display" id="display" readonly>
+        <div class="buttons">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button class="operator" onclick="appendToDisplay('/')">÷</button>
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button class="operator" onclick="appendToDisplay('*')">×</button>
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button class="operator" onclick="appendToDisplay('-')">−</button>
+            <button onclick="appendToDisplay('0')">0</button>
+            <button onclick="appendToDisplay('.')">.</button>
+            <button class="equal" onclick="calculateResult()">=</button>
+            <button class="operator" onclick="appendToDisplay('+')">+</button>
         </div>
     </div>
 
     <script>
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
-            document.getElementById(tabName).style.display = 'block';
+        function appendToDisplay(value) {
+            document.getElementById("display").value += value;
         }
-        showTab('basic');
-
-        function pressKey(key) {
-            document.getElementById('display').value += key;
-        }
-
-        function calculate() {
-            let result = eval(document.getElementById('display').value);
-            document.getElementById('display').value = result;
-            let historyItem = document.createElement("li");
-            historyItem.textContent = result;
-            document.getElementById("history").appendChild(historyItem);
-        }
-
         function clearDisplay() {
-            document.getElementById('display').value = '';
+            document.getElementById("display").value = "";
         }
-
-        let totalBudget = 0;
-
-        function addBudget() {
-            let income = parseFloat(document.getElementById('income').value) || 0;
-            let expense = parseFloat(document.getElementById('expense').value) || 0;
-            totalBudget += income - expense;
-            let historyItem = document.createElement("li");
-            historyItem.textContent = `収入: ¥${income} - 支出: ¥${expense} = 収支: ¥${income - expense}`;
-            document.getElementById("budget-history").appendChild(historyItem);
-            document.getElementById("total-budget").textContent = `¥${totalBudget}`;
-        }
-
-        function calculateTax() {
-            let income = document.getElementById('incomeTax').value;
-            let tax = income * 0.1;
-            document.getElementById('taxResult').textContent = `推定税額: ¥${tax}`;
+        function calculateResult() {
+            try {
+                document.getElementById("display").value = eval(document.getElementById("display").value);
+            } catch {
+                alert("計算エラー");
+                clearDisplay();
+            }
         }
     </script>
 </body>
